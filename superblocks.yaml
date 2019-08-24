@@ -1,0 +1,15 @@
+version: 1
+jobs:
+  build_and_test:
+    image: nixos/nix
+    script:
+      - nix-env -if https://github.com/cachix/cachix/tarball/master --substituters https://cachix.cachix.org --trusted-public-keys cachix.cachix.org-1:eWNHQldwUO7G2VkjpnjDbWwy4KQ/HNxht7H4SSoMckM=
+      - cachix use dapp
+      - git clone --recursive https://github.com/dapphub/dapptools $HOME/.dapp/dapptools
+      - nix-env -f $HOME/.dapp/dapptools -iA dapp solc
+      - dapp --use solc:0.5.0 test
+    
+stages:
+  - build_and_test:
+      jobs:
+        - build_and_test
